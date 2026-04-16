@@ -1,16 +1,16 @@
 import { format, addMonths, subMonths, parseISO } from 'date-fns'
 import { useStore } from '../../stores/useStore'
+import { useDatesWithTodos } from '../../hooks/useDatesWithTodos'
 import { MonthNavigation } from './MonthNavigation'
 import { WeekdayHeader } from './WeekdayHeader'
 import { CalendarGrid } from './CalendarGrid'
-
-// Mock indicator dates — will be replaced by real API in issue #9
-const MOCK_INDICATOR_DATES: string[] = []
 
 export function CalendarPanel() {
   const { selectedDate, currentMonth, setSelectedDate, setCurrentMonth } = useStore()
 
   const currentMonthDate = parseISO(`${currentMonth}-01`)
+  const { data: datesData } = useDatesWithTodos(currentMonth)
+  const indicatorDates = datesData?.dates ?? []
 
   const handlePrevMonth = () => {
     const prev = subMonths(currentMonthDate, 1)
@@ -35,7 +35,7 @@ export function CalendarPanel() {
       <CalendarGrid
         currentMonth={currentMonthDate}
         selectedDate={selectedDate}
-        indicatorDates={MOCK_INDICATOR_DATES}
+        indicatorDates={indicatorDates}
         onSelectDate={handleSelectDate}
       />
     </div>
