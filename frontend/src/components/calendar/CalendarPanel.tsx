@@ -29,7 +29,7 @@ export function CalendarPanel() {
   const monthLabel = format(currentMonthDate, 'yyyy년 M월')
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-4">
+    <div className="bg-white rounded-2xl shadow-sm p-3 md:p-4">
       <MonthNavigation label={monthLabel} onPrev={handlePrevMonth} onNext={handleNextMonth} />
       <WeekdayHeader />
       <CalendarGrid
