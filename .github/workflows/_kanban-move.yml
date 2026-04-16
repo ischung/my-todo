@@ -12,9 +12,7 @@ on:
         required: true
         type: number
     secrets:
-      APP_ID:
-        required: false
-      APP_PRIVATE_KEY:
+      KANBAN_TOKEN:
         required: false
 
 jobs:
@@ -24,20 +22,12 @@ jobs:
       - name: Check secrets configured
         id: check
         run: |
-          if [ -z "${{ secrets.APP_ID }}" ] || [ -z "${{ secrets.APP_PRIVATE_KEY }}" ]; then
+          if [ -z "${{ secrets.KANBAN_TOKEN }}" ]; then
             echo "configured=false" >> $GITHUB_OUTPUT
-            echo "::notice::APP_ID 또는 APP_PRIVATE_KEY 미등록 — 칸반 이동 스킵. Repo Settings → Secrets에서 등록하면 자동화가 활성화됩니다."
+            echo "::notice::KANBAN_TOKEN 미등록 — 칸반 이동 스킵. Repo Settings → Secrets에서 등록하면 자동화가 활성화됩니다."
           else
             echo "configured=true" >> $GITHUB_OUTPUT
           fi
-
-      - name: Generate GitHub App token
-        if: steps.check.outputs.configured == 'true'
-        id: app-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Move linked issues to ${{ inputs.status }}
         if: steps.check.outputs.configured == 'true'
@@ -47,7 +37,7 @@ jobs:
           PR_NUMBER: ${{ inputs.pr_number }}
           KANBAN_PROJECT_NUMBER: ${{ vars.KANBAN_PROJECT_NUMBER }}
         with:
-          github-token: ${{ steps.app-token.outputs.token }}
+          github-token: ${{ secrets.KANBAN_TOKEN }}
           script: |
             const targetStatus = process.env.TARGET_STATUS;
             const prNumber = parseInt(process.env.PR_NUMBER, 10);
