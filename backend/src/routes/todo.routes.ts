@@ -1,7 +1,12 @@
 import { Router } from 'express'
 import { todoService, NotFoundError } from '../services/todo.service.js'
 import { validate } from '../middlewares/validate.js'
-import { createTodoSchema, getTodosQuerySchema, updateTodoSchema } from '../schemas/todo.schema.js'
+import {
+  createTodoSchema,
+  getTodosQuerySchema,
+  getDatesByMonthSchema,
+  updateTodoSchema,
+} from '../schemas/todo.schema.js'
 import { success, fail } from '../lib/response.js'
 
 const router = Router()
@@ -11,6 +16,17 @@ router.get('/', validate(getTodosQuerySchema, 'query'), async (req, res, next) =
   try {
     const { date } = req.query as { date: string }
     const result = await todoService.getByDate(date)
+    success(res, result)
+  } catch (err) {
+    next(err)
+  }
+})
+
+// GET /api/v1/todos/dates?month=YYYY-MM
+router.get('/dates', validate(getDatesByMonthSchema, 'query'), async (req, res, next) => {
+  try {
+    const { month } = req.query as { month: string }
+    const result = await todoService.getDatesByMonth(month)
     success(res, result)
   } catch (err) {
     next(err)

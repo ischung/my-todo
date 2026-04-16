@@ -29,6 +29,11 @@ export const updateTodoSchema = z
     message: 'At least one of title or completed must be provided',
   })
 
+export const getDatesByMonthSchema = z.object({
+  month: z.string().regex(/^\d{4}-\d{2}$/, 'month must be YYYY-MM format'),
+})
+
 export type CreateTodoInput = z.infer<typeof createTodoSchema>
 export type UpdateTodoInput = z.infer<typeof updateTodoSchema>
 export type GetTodosQuery = z.infer<typeof getTodosQuerySchema>
+export type GetDatesByMonthQuery = z.infer<typeof getDatesByMonthSchema>

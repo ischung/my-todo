@@ -31,4 +31,9 @@ export const todoService = {
     await todoRepository.delete(id)
     return { id }
   },
+
+  async getDatesByMonth(month: string) {
+    const dates = await todoRepository.findDistinctDatesByMonth(month)
+    return { month, dates }
+  },
 }

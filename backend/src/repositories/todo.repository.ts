@@ -32,4 +32,14 @@ export const todoRepository = {
   delete(id: string) {
     return prisma.todo.delete({ where: { id } })
   },
+
+  async findDistinctDatesByMonth(month: string): Promise<string[]> {
+    const rows = await prisma.todo.findMany({
+      where: { date: { startsWith: month } },
+      select: { date: true },
+      distinct: ['date'],
+      orderBy: { date: 'asc' },
+    })
+    return rows.map((r) => r.date)
+  },
 }
