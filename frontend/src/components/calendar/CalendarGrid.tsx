@@ -5,6 +5,7 @@ import {
   endOfWeek,
   eachDayOfInterval,
   isSameMonth,
+  format,
 } from 'date-fns'
 import { DayCell } from './DayCell'
 
@@ -27,9 +28,6 @@ export function CalendarGrid({
   const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 0 })
 
   const days = eachDayOfInterval({ start: gridStart, end: gridEnd })
-
-  // date-fns eachDayOfInterval gives exactly the right range, but we need 6 rows (42 cells)
-  // Pad to 42 cells if necessary
   while (days.length < 42) {
     const last = days[days.length - 1]
     const next = new Date(last)
@@ -39,25 +37,48 @@ export function CalendarGrid({
 
   const indicatorSet = new Set(indicatorDates)
 
+  // 42개 날짜를 6행 × 7열로 분할
+  const weeks: Date[][] = []
+  for (let i = 0; i < 42; i += 7) {
+    weeks.push(days.slice(i, i + 7))
+  }
+
+  const monthLabel = format(currentMonth, 'yyyy년 M월')
+
   return (
-    <div className="grid grid-cols-7 gap-y-1" role="grid">
-      {days.map((day, idx) => {
-        const isCurrentMonth = isSameMonth(day, currentMonth)
-        if (!isCurrentMonth) {
-          return <div key={idx} className="w-9 h-9 mx-auto" role="gridcell" aria-hidden="true" />
-        }
-        const dateStr = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`
-        return (
-          <div key={idx} className="flex justify-center" role="gridcell">
-            <DayCell
-              date={day}
-              isSelected={dateStr === selectedDate}
-              hasIndicator={indicatorSet.has(dateStr)}
-              onClick={onSelectDate}
-            />
-          </div>
-        )
-      })}
+    <div
+      role="grid"
+      aria-label={`${monthLabel} 달력`}
+      className="flex flex-col gap-y-1"
+    >
+      {weeks.map((week, weekIdx) => (
+        <div key={weekIdx} role="row" className="grid grid-cols-7">
+          {week.map((day, dayIdx) => {
+            const isCurrentMonth = isSameMonth(day, currentMonth)
+            if (!isCurrentMonth) {
+              return (
+                <div
+                  key={dayIdx}
+                  role="gridcell"
+                  aria-hidden="true"
+                  className="w-9 h-9 mx-auto"
+                />
+              )
+            }
+            const dateStr = format(day, 'yyyy-MM-dd')
+            return (
+              <div key={dayIdx} role="gridcell" className="flex justify-center">
+                <DayCell
+                  date={day}
+                  isSelected={dateStr === selectedDate}
+                  hasIndicator={indicatorSet.has(dateStr)}
+                  onClick={onSelectDate}
+                />
+              </div>
+            )
+          })}
+        </div>
+      ))}
     </div>
   )
 }
