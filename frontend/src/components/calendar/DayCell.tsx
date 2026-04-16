@@ -14,6 +14,7 @@ export function DayCell({ date, isSelected, hasIndicator, onClick }: DayCellProp
   const cellClass = [
     'relative flex flex-col items-center justify-center w-9 h-9 rounded-full cursor-pointer select-none',
     'transition-colors duration-150',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1',
     isSelected
       ? 'bg-primary text-white'
       : today
