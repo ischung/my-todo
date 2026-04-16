@@ -2,6 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './lib/queryClient'
 import { CalendarPanel } from './components/calendar/CalendarPanel'
 import { TodoPanel } from './components/todo/TodoPanel'
+import { ToastContainer } from './components/common/Toast'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <TodoPanel />
         </div>
       </div>
+      <ToastContainer />
     </QueryClientProvider>
   )
 }
