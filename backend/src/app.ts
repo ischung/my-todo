@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import healthRouter from './routes/health.routes.js'
+import todoRouter from './routes/todo.routes.js'
 import { notFoundHandler, errorHandler } from './middlewares/errorHandler.js'
 
 const app = express()
@@ -16,6 +17,7 @@ app.use(express.json())
 
 // Routes
 app.use('/api/v1', healthRouter)
+app.use('/api/v1/todos', todoRouter)
 
 // Error handling (반드시 라우터 이후에 등록)
 app.use(notFoundHandler)
