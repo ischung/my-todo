@@ -23,9 +23,12 @@ app.use('/api/v1/todos', todoRouter)
 app.use(notFoundHandler)
 app.use(errorHandler)
 
-const PORT = Number(process.env.PORT ?? 3000)
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`)
-})
+// 테스트 환경에서는 supertest가 자체 포트를 관리하므로 listen하지 않음
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = Number(process.env.PORT ?? 3000)
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`)
+  })
+}
 
 export default app
