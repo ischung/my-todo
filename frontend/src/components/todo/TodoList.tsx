@@ -1,4 +1,5 @@
 import type { Todo } from '../../types/todo'
+import { TodoItem } from './TodoItem'
 
 interface TodoListProps {
   todos: Todo[]
@@ -22,16 +23,7 @@ export function TodoList({ todos, isLoading }: TodoListProps) {
   return (
     <ul className="space-y-2">
       {todos.map((todo) => (
-        <li
-          key={todo.id}
-          className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg text-sm text-neutral-700"
-        >
-          <span
-            className={`flex-1 ${todo.completed ? 'line-through text-neutral-400' : ''}`}
-          >
-            {todo.title}
-          </span>
-        </li>
+        <TodoItem key={todo.id} todo={todo} />
       ))}
     </ul>
   )
