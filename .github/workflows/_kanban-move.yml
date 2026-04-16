@@ -13,15 +13,26 @@ on:
         type: number
     secrets:
       APP_ID:
-        required: true
+        required: false
       APP_PRIVATE_KEY:
-        required: true
+        required: false
 
 jobs:
   move:
     runs-on: ubuntu-latest
     steps:
+      - name: Check secrets configured
+        id: check
+        run: |
+          if [ -z "${{ secrets.APP_ID }}" ] || [ -z "${{ secrets.APP_PRIVATE_KEY }}" ]; then
+            echo "configured=false" >> $GITHUB_OUTPUT
+            echo "::notice::APP_ID 또는 APP_PRIVATE_KEY 미등록 — 칸반 이동 스킵. Repo Settings → Secrets에서 등록하면 자동화가 활성화됩니다."
+          else
+            echo "configured=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Generate GitHub App token
+        if: steps.check.outputs.configured == 'true'
         id: app-token
         uses: actions/create-github-app-token@v1
         with:
@@ -29,6 +40,7 @@ jobs:
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Move linked issues to ${{ inputs.status }}
+        if: steps.check.outputs.configured == 'true'
         uses: actions/github-script@v7
         env:
           TARGET_STATUS: ${{ inputs.status }}
